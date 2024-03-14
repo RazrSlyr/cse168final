@@ -1,84 +1,67 @@
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using NumSharp;
+using System;
+using Unity.VisualScripting;
+using System.Linq;
 
 public class VolumeDataReader
 {
-    private static string dataPath = Application.dataPath + "/Resources/";
-
-        public static float[,,] ReadBrainData()
+    public enum Data
     {
-        float[,,] output = new float[256, 109, 256];
-        float max = 0;
-        float min = float.MaxValue;
-        int dataLength = 0;
+        Skull,
+        SkullZScores,
+        Rabbit,
+    }
+    public static int numDataOptions = 2;
+    private static float[,,] skullData = null;
+    private static float[,,] skullZScoreData = null;
+    public static float skullDataThreshold = 0.3f;
+    public static float skullZScoreDataThreshold = 0.15f;
+    private static float[,,] rabbitData = null;
 
-        for (int i = 1; i <= 109; i++)
-        {
-            string filePath = dataPath + "BrainScans/MRBrain." + i;
-            byte[] data = File.ReadAllBytes(filePath);
-            dataLength = data.Length;
+    public static float[,,] GetSkullZScoreData()
+    {
+        if (skullZScoreData != null) return skullZScoreData;
+        VolumeData skullDataContainer = VolumeData.GetVolumeDataFromJson(Resources.Load<TextAsset>("Preprocessed/skullDataZScores").text);
+        var array = np.array<float>(skullDataContainer.data);
+        var reshaped = array.reshape(skullDataContainer.dimensions[0],
+            skullDataContainer.dimensions[1],
+            skullDataContainer.dimensions[2]);
+        reshaped = (reshaped - reshaped.min()) / (reshaped.max() - reshaped.min());
+        reshaped = reshaped.swapaxes(0, 1);
+        skullZScoreData = (float[,,])reshaped.ToMuliDimArray<float>();
+        return skullZScoreData;
+    }
 
-            // Now you can access the data byte by byte
-            for (int j = 0; j < dataLength; j += 2)
-            {
-                float valueAtPoint = (int) ((data[j] << 8) | (data[j + 1] & 0xFF));
-                if (valueAtPoint > max) {
-                    max = valueAtPoint;
-                }
-                min = Mathf.Min(valueAtPoint, min);
-                output[j / 2 % 256, i - 1, j / 512] = valueAtPoint;
-            }
-        }
-
-        for (int i = 1; i <= 109; i++)
-        {
-            for (int j = 0; j < dataLength; j += 2)
-            {
-                float valueAtPoint = output[j / 2 % 256, i - 1, j / 512];
-                output[j / 2 % 256, i - 1, j / 512] = (valueAtPoint - min) / (max - min);
-            }
-        }
-
-        return output;
+    public static float[,,] GetSkullData()
+    {
+        if (skullData != null) return skullData;
+        VolumeData skullDataContainer = VolumeData.GetVolumeDataFromJson(Resources.Load<TextAsset>("Preprocessed/skullData").text);
+        var array = np.array<float>(skullDataContainer.data);
+        var reshaped = array.reshape(skullDataContainer.dimensions[0],
+            skullDataContainer.dimensions[1],
+            skullDataContainer.dimensions[2]);
+        reshaped = (reshaped - reshaped.min()) / (reshaped.max() - reshaped.min());
+        reshaped = reshaped.swapaxes(0, 1);
+        skullData = (float[,,])reshaped.ToMuliDimArray<float>();
+        return skullData;
 
     }
 
-    public static float[,,] ReadSkullData()
+    public static float[,,] GetRabbitData()
     {
-        float[,,] output = new float[256, 113, 256];
-        float max = 0;
-        float min = float.MaxValue;
-        int dataLength = 0;
-
-        for (int i = 1; i <= 113; i++)
-        {
-            string filePath = dataPath + "SkullScans/CThead." + i;
-            byte[] data = File.ReadAllBytes(filePath);
-            dataLength = data.Length;
-
-            // Now you can access the data byte by byte
-            for (int j = 0; j < dataLength; j += 2)
-            {
-                float valueAtPoint = (int) ((data[j] << 8) | (data[j + 1] & 0xFF));
-                if (valueAtPoint > max) {
-                    max = valueAtPoint;
-                }
-                min = Mathf.Min(valueAtPoint, min);
-                output[j / 2 % 256, i - 1, j / 512] = valueAtPoint;
-            }
-        }
-
-        for (int i = 1; i <= 113; i++)
-        {
-            for (int j = 0; j < dataLength; j += 2)
-            {
-                float valueAtPoint = output[j / 2 % 256, i - 1, j / 512];
-                output[j / 2 % 256, i - 1, j / 512] = (valueAtPoint - min) / (max - min);
-            }
-        }
-
-        return output;
-
+        if (rabbitData != null) return rabbitData;
+        VolumeData rabbitDataContainer = VolumeData.GetVolumeDataFromJson(Resources.Load<TextAsset>("CTrawflaten").text);
+        var array = np.array<float>(rabbitDataContainer.data);
+        var reshaped = array.reshape(rabbitDataContainer.dimensions[0],
+            rabbitDataContainer.dimensions[1],
+            rabbitDataContainer.dimensions[2]);
+        reshaped = (reshaped - reshaped.min()) / (reshaped.max() - reshaped.min());
+        reshaped = reshaped.swapaxes(0, 1);
+        rabbitData = (float[,,])reshaped.ToMuliDimArray<float>();
+        return rabbitData;
     }
+
+
 }

@@ -12,7 +12,6 @@ public class Chunk : MonoBehaviour
     private List<Color> colors = new List<Color>();
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
-    private MeshCollider meshCollider;
     private ushort[] xBounds;
     private ushort[] yBounds;
     private ushort[] zBounds;
@@ -39,7 +38,6 @@ public class Chunk : MonoBehaviour
 
         meshRenderer.material = World.Instance.VoxelMaterial;
         meshFilter.mesh = mesh;
-        meshCollider.sharedMesh = mesh;
     }
 
     // New method to iterate through the voxel data
@@ -259,7 +257,9 @@ public class Chunk : MonoBehaviour
                     }
                     voxels[x - xBounds[0], y - yBounds[0], z - zBounds[0]] = new Voxel(transform.position + 
                         new Vector3(x - xBounds[0], y - yBounds[0], z - zBounds[0]), 
-                        new Color(World.Instance.voxelData[x, y, z], World.Instance.voxelData[x, y, z], World.Instance.voxelData[x, y, z],
+                        new Color((World.Instance.voxelData[x, y, z] - World.Instance.renderThreshold) / (1 - World.Instance.renderThreshold),
+                         0, 
+                         1 - (World.Instance.voxelData[x, y, z] - World.Instance.renderThreshold) / (1 - World.Instance.renderThreshold),
                             World.Instance.voxelData[x, y, z]))
                     {
                         isActive = World.Instance.voxelData[x, y, z] > World.Instance.renderThreshold
@@ -285,7 +285,6 @@ public class Chunk : MonoBehaviour
         // Initialize Mesh Components
         meshFilter = gameObject.AddComponent<MeshFilter>();
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshCollider = gameObject.AddComponent<MeshCollider>();
 
         // Call this to generate the chunk mesh
         GenerateMesh();
