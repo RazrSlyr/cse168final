@@ -114,30 +114,6 @@ public class Chunk : MonoBehaviour
         return false;
     }
 
-    private bool IsVoxelHiddenInChunk(int x, int y, int z)
-    {
-        if (x < 0 || x >= chunkSize || y < 0 || y >= chunkSize || z < 0 || z >= chunkSize)
-            return true; // Face is at the boundary of the chunk
-        return !voxels[x, y, z].isActive;
-    }
-
-    private bool IsVoxelHiddenInWorld(Vector3 globalPos)
-    {
-        // Check if there is a chunk at the global position
-        Chunk neighborChunk = World.Instance.GetChunkAt(globalPos);
-        if (neighborChunk == null)
-        {
-            // No chunk at this position, so the voxel face should be hidden
-            return true;
-        }
-
-        // Convert the global position to the local position within the neighboring chunk
-        Vector3 localPos = neighborChunk.transform.InverseTransformPoint(globalPos);
-
-        // If the voxel at this local position is inactive, the face should be visible (not hidden)
-        return !neighborChunk.IsVoxelActiveAt(localPos);
-    }
-
     private void AddFaceData(int x, int y, int z, int faceIndex)
     {
         // Based on faceIndex, determine vertices and triangles

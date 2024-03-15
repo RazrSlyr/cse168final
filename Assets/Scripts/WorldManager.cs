@@ -20,7 +20,7 @@ public class WorldManager : MonoBehaviour
     public void ShowData() {
         GameObject currentWorld = (int) activeData >= worlds.Count ? null : (GameObject) worlds[(int) activeData];
         if (currentWorld == null) {
-            currentWorld = Instantiate(worldPrefab, centerEye.position + centerEye.forward * 1, Quaternion.identity);
+            currentWorld = Instantiate(worldPrefab, centerEye.position + centerEye.forward * 2, Quaternion.identity);
             currentWorld.name = ((int) activeData) + "_World";
             currentWorld.GetComponent<World>().dataset = activeData;
             currentWorld.GetComponent<World>().Init();

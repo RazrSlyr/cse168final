@@ -643,7 +643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 351484da761e5344caef2037c6a3ec2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activeData: 1
+  activeData: 0
   worldPrefab: {fileID: 1847143002291437492, guid: 0512625cfdb6f884ea56a361920e238e,
     type: 3}
   centerEye: {fileID: 1546513617}

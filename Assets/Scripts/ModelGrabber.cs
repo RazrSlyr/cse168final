@@ -59,7 +59,7 @@ public class ModelGrabber : MonoBehaviour
         }
 
         if (rightGrabbableCube != null && !rightHandFull && OVRInput.GetDown(rightGrabButton)) {
-            rightGrabbableCube.GetComponent<Grabbable>().Grab(rightGrabbableCube);
+            rightGrabbableCube.GetComponent<Grabbable>().Grab(rightControllerPivot);
             rightHandFull = true;
         }
 

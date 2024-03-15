@@ -28,7 +28,6 @@ public class World : MonoBehaviour
 
     [HideInInspector]
     public new Rigidbody rigidbody;
-    private float totalDensity;
 
     // Taken from
     // https://stackoverflow.com/questions/46358717/how-to-loop-through-and-destroy-all-children-of-a-game-object-in-unity#46359133
@@ -86,7 +85,8 @@ public class World : MonoBehaviour
                 break;
             case VolumeDataReader.Data.Rabbit:
                 voxelData = VolumeDataReader.GetRabbitData();
-                postLoadScale = new Vector3(1, -1, 1);
+                postLoadScale = new Vector3(1, 1, 1);
+                renderThreshold = VolumeDataReader.rabbitDataThreshold;
                 break;
             default:
                 return;
